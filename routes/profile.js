@@ -5,7 +5,8 @@ const profileController = require('../controller/profileController')
 
 router.get('/:id',profileController.profile)
 
-router.get('/userPost',profileController.userPost)
+router.get('/userList/:id',profileController.userList)
+
 
 router.patch('/follow', profileController.follow)
 

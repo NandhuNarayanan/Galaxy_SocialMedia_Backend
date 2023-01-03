@@ -111,32 +111,14 @@ exports.getUsers = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const allUser = await userModel.find()
-    res.status(200).json(allUser)
+    console.log(req.params)
+    const loginUser = mongoose.Types.ObjectId(req.params.id)
+    console.log(loginUser, 'lohin')
+    const suggetionUser = await userModel.find({
+      $and: [{ _id: { $ne: loginUser } }, { followers: { $nin: [loginUser] } }],
+    })
+    res.status(200).json(suggetionUser)
   } catch (error) {
     console.log(error)
   }
 }
-
-// exports.findSuggetion = async (req, res) => {
-//   try {
-//     console.log(req.body.loginUser._id,"assssss")
-//     const logginedUser = mongoose.Types.ObjectId(req.body.loginUser._id)
-//     // const following = await userModel.findById(id, 'following')
-// //     const hiddenIds = following?.following
-// //     hiddenIds?.push(id)
-
-//     const suggetionUser = await userModel.find({$and:[{_id:{$ne:logginedUser}},{followers:{$nin:[logginedUser]}}] })
-
-//     // const exceptFollowing = await userModel.find({
-//     //   $and: [
-//     //     { _id: { $ne: logginedUser } },
-//     //     { followers: { $nin: [logginedUser] } },
-//     //   ],
-//     // })
-
-//     console.log(suggetionUser,'......cccc.......ccccc......')
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }

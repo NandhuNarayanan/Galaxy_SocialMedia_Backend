@@ -14,9 +14,10 @@ exports.liked = async (req, res) => {
       postId,
       likedUsers: [userId],
     })
+    console.log(likedUser,'ooooooooooooooooo');
     if (likedUser) {
       const post = await postModel.findOneAndUpdate(
-        { _id: postId },
+        { postId },
         { isLiked: false },
       )
       const unLike = await postModel.findOneAndUpdate(
@@ -27,14 +28,14 @@ exports.liked = async (req, res) => {
           $pull: { likedUsers: [userId] },
         },
       )
-      console.log(unLike);
+      console.log(unLike ,'unlike');
       res.status(200).json({
         unLike,
         post,
       })
     } else {
       const post = await postModel.findOneAndUpdate(
-        { _id: postId },
+        { postId },
         { isLiked: true },
       )
       const liked = await postModel.findOneAndUpdate(
@@ -45,7 +46,7 @@ exports.liked = async (req, res) => {
           $push: { likedUsers: [userId] },
         },
       )
-      console.log(liked);
+      console.log(liked,'asdasddsadsa');
       liked.updateOne({ isLiked: true })
       res.status(200).json({
         liked,
