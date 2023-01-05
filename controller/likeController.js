@@ -47,7 +47,7 @@ exports.liked = async (req, res) => {
         },
       )
       console.log(liked,'asdasddsadsa');
-      liked.updateOne({ isLiked: true })
+      // liked.updateOne({ isLiked: true })
       res.status(200).json({
         liked,
         post,

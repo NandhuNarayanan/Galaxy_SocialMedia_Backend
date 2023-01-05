@@ -8,11 +8,14 @@ router.post('/uploadpost', postController.post)
 
 router.get('/getpost', postController.getPosts)
 
+router.get('/getComments/:id', commentController.getComments )
+
 router.patch('/liked',likeController.liked)
+
+router.patch('/savedPost',postController.savedPost)
 
 router.post('/comment', commentController.comment )
 
-router.get('/getComments/:id', commentController.getComments )
 
 
 

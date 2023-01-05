@@ -16,7 +16,6 @@ exports.profile = async (req, res) => {
 
 exports.follow = async (req, res) => {
   try {
-    console.log('sdsdsdsdsdssdsdsdsd')
     const { followUserId, user } = req.body
     const userId = mongoose.Types.ObjectId(user)
     const profileUserId = mongoose.Types.ObjectId(followUserId)
@@ -97,11 +96,8 @@ exports.editProfile = async (req, res) => {
 exports.userList = async (req, res) => {
   try {
     const user = mongoose.Types.ObjectId(req.params.id)
-    console.log(user, 'userList')
     const followingList = await userModel.find({ followers: user })
     const followersList = await userModel.find({following:user})
-    console.log(followersList,'image.png');
-    console.log(followingList,'follllllllllllllllllllllllllll');
     res.json({followersList,followingList})
   } catch (error) {
     console.log(error)

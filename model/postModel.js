@@ -16,7 +16,12 @@ const postSchema = mongoose.Schema(
       },
     isDeleted: { type: Boolean, default: false },
     hiddenUsers: [{ type: mongoose.Types.ObjectId }],
-    isLiked:{type:Boolean, default:false}
+    isLiked:{type:Boolean, default:false},
+    savedPost:[{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'users'
+  }],
+  isSaved:{type:Boolean, default:false},
   },
   { timestamps: true },
 )
