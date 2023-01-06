@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 const authRouter = require('./routes/auth.js')
 const postRouter = require('./routes/post')
 const profileRouter = require('./routes/profile')
+const chatRouter = require('./routes/chat')
+const messageRouter = require('./routes/message')
 
 let morgan = require('morgan')
 require('dotenv').config()
@@ -29,10 +31,14 @@ mongoose.connect(connectionString).then(()=>{
     console.log(err.message);
 })
 
+//usage of routes
 app.use('/',authRouter)
 app.use('/post',postRouter)
 app.use('/profile',profileRouter)
+app.use('/chat',chatRouter)
+app.use('/message',messageRouter)
 
+ 
 app.listen(port,()=>{
     console.log("server running on port :" + port);
 })

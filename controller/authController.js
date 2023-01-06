@@ -29,7 +29,7 @@ exports.signup = async (req, res) => {
 
     res.status(201).json({ accessToken, refreshToken, newUser })
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       message: error,
     })
     console.log(error)
@@ -51,6 +51,9 @@ exports.login = async (req, res) => {
     await userModel.findByIdAndUpdate(newUser._id, { $push: { refreshToken } })
     res.status(200).json({ refreshToken, accessToken, newUser })
   } catch (error) {
+    res.status(500).json({
+      message: error,
+    })
     console.log(error)
   }
 }
@@ -105,6 +108,9 @@ exports.getUsers = async (req, res) => {
     const newUser = await userModel.findOne({ _id: user })
     res.status(200).json({ newUser })
   } catch (error) {
+    res.status(500).json({
+      message: error,
+    })
     console.log(error)
   }
 }
@@ -119,6 +125,9 @@ exports.getAllUsers = async (req, res) => {
     })
     res.status(200).json(suggetionUser)
   } catch (error) {
+    res.status(500).json({
+      message: error,
+    })
     console.log(error)
   }
 }

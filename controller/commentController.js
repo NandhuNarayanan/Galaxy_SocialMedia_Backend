@@ -15,6 +15,7 @@ exports.comment = (async(req,res)=>{
 
         
     } catch (error) {
+        res.status(500).json(error)
         console.log(error);
     }
 })
@@ -26,6 +27,7 @@ exports.getComments = (async(req,res)=> {
         const showComments = await commentModel.findOne({postId:req.params.id}).populate('comments.userId')
         res.status(200).json(showComments)
     } catch (error) {
+        res.status(500).json(error)
         console.log(error);
     }
 })

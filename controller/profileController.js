@@ -10,6 +10,7 @@ exports.profile = async (req, res) => {
       .select('-refreshToken')
     res.status(200).json(profile)
   } catch (error) {
+    res.status(500).json(error)
     console.log(error)
   }
 }
@@ -47,6 +48,7 @@ exports.follow = async (req, res) => {
       .status(201)
       .json({ followersUser, followingUser, message: 'follow successfully' })
   } catch (error) {
+    res.status(500).json(error)
     console.log(error)
   }
 }
@@ -66,6 +68,7 @@ exports.profilePicture = async (req, res) => {
       .status(201)
       .json({ profileUpdate, message: 'profile updated successfull' })
   } catch (error) {
+    res.status(500).json(error)
     console.log(error)
   }
 }
@@ -89,6 +92,7 @@ exports.editProfile = async (req, res) => {
         .json({ userinfo, message: 'user info updated successfull' })
     }
   } catch (error) {
+    res.status(500).json(error)
     console.log(error)
   }
 }
@@ -100,6 +104,7 @@ exports.userList = async (req, res) => {
     const followersList = await userModel.find({following:user})
     res.json({followersList,followingList})
   } catch (error) {
+    res.status(500).json(error)
     console.log(error)
   }
 }

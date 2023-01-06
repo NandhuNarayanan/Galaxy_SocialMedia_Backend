@@ -4,10 +4,12 @@ const userModel = require('../model/userModel')
 
 exports.post = async (req, res) => {
   try {
-    const { url, userId } = req.body
-    const createPost = new postModel({ image: url, userId: userId })
+    console.log(req.body)
+    const { url, userId,caption } = req.body
+    const createPost = new postModel({ image: url, userId: userId, caption:caption })
     createPost.save()
   } catch (error) {
+    res.status(500).json(error)
     console.log(error)
   }
 }
@@ -20,6 +22,7 @@ exports.getPosts = async (req, res) => {
       .sort({ createdAt: -1 })
     res.status(200).json(Posts)
   } catch (error) {
+    res.status(500).json(error)
     console.log(error)
   }
 }
@@ -61,6 +64,7 @@ exports.savedPost = async (req, res) => {
       res.status(200).json({ savePost, isSaved })
     }
   } catch (error) {
+    res.status(500).json(error)
     console.log(error)
   }
 }
