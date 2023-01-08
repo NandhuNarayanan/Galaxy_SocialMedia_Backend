@@ -7,7 +7,6 @@ router.get('/:id',profileController.profile)
 
 router.get('/userList/:id',profileController.userList)
 
-
 router.patch('/follow', profileController.follow)
 
 router.patch('/profilePicture', profileController.profilePicture)

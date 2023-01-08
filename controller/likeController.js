@@ -2,7 +2,7 @@ const { default: mongoose } = require('mongoose')
 const postModel = require('../model/postModel')
 
 exports.liked = async (req, res) => {
-  console.log('sdsdfsf');
+  console.log(req.body.postId,'sdsdfsf');
   try {
     const userId = mongoose.Types.ObjectId(req.body.userId)
     const postId = mongoose.Types.ObjectId(req.body.postId)
@@ -11,18 +11,19 @@ exports.liked = async (req, res) => {
     // console.log(post,"kdkdkd")
 
     const likedUser = await postModel.findOne({
-      postId,
-      likedUsers: [userId],
+     $and:[{_id:postId},
+      {likedUsers: [userId]}]
     })
     console.log(likedUser,'ooooooooooooooooo');
     if (likedUser) {
-      const post = await postModel.findOneAndUpdate(
-        { postId },
+      console.log('liklikliklikliklik');
+      const post = await postModel.updateOne(
+        { _id:postId },
         { isLiked: false },
       )
-      const unLike = await postModel.findOneAndUpdate(
+      const unLike = await postModel.updateOne(
         {
-          postId,
+          _id:postId,
         },
         {
           $pull: { likedUsers: [userId] },
@@ -34,13 +35,14 @@ exports.liked = async (req, res) => {
         post,
       })
     } else {
-      const post = await postModel.findOneAndUpdate(
-        { postId },
+      console.log('yyyyyyyyyryertyertydrgdfg');
+      const post = await postModel.updateOne(
+        { _id:postId },
         { isLiked: true },
       )
-      const liked = await postModel.findOneAndUpdate(
+      const liked = await postModel.updateOne(
         {
-          postId,
+          _id:postId
         },
         {
           $push: { likedUsers: [userId] },

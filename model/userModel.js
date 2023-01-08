@@ -21,6 +21,11 @@ const userSchema = mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'users'
     }],
+    savedPost:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'posts'
+    }],
+    // isSaved:{type:Boolean, default:false},
     refreshToken: [String]
 
 },{ timestamps: true })

@@ -1,12 +1,15 @@
+const { default: mongoose } = require('mongoose')
 const { findByIdAndUpdate } = require('../model/commentModel')
 const commentModel = require('../model/commentModel')
 
 exports.comment = (async(req,res)=>{
     try {
-        const {postId,userId,content } = req.body
-        const commentFound = await commentModel.findOne({postId})
+        const {content } = req.body
+        const postId = mongoose.Types.ObjectId(req.body.postId)
+        const userId = mongoose.Types.ObjectId(req.body.userId)
+        const commentFound = await commentModel.findOne({_id:postId})
         if (!commentFound) {
-            const newComment = new commentModel({postId,comments:[{userId:userId,content}]})
+            const newComment = new commentModel({_id:postId,comments:[{userId:userId,content}]})
             newComment.save()
            return res.status(201).json({message:'commented successfully'})
         }

@@ -5,8 +5,12 @@ const userModel = require('../model/userModel')
 exports.post = async (req, res) => {
   try {
     console.log(req.body)
-    const { url, userId,caption } = req.body
-    const createPost = new postModel({ image: url, userId: userId, caption:caption })
+    const { url, userId, caption } = req.body
+    const createPost = new postModel({
+      image: url,
+      userId: userId,
+      caption: caption,
+    })
     createPost.save()
   } catch (error) {
     res.status(500).json(error)
@@ -29,40 +33,75 @@ exports.getPosts = async (req, res) => {
 
 exports.savedPost = async (req, res) => {
   try {
-    console.log(req.body, 'save cheyyanullath vannittundeeee')
     const { SavedUserId, savePostId } = req.body
     console.log(SavedUserId)
-    const findSave = await postModel.findOne({
-      _id:savePostId ,
-      savedPost: SavedUserId,
+    const findSave = await userModel.findOne({
+      _id: SavedUserId,
+      savedPost: savePostId,
     })
     if (findSave) {
-        console.log('ajajaja');
-      const saved = await postModel.findByIdAndUpdate(
-        { _id:savePostId },
-        { $set: { isSaved: false } },
-      )
-      const unSave = await postModel.findByIdAndUpdate(
-        { _id:savePostId },
-        { $pull: { savedPost: SavedUserId } },
+      const unSave = await userModel.findByIdAndUpdate(
+        { _id: SavedUserId },
+        { $pull: { savedPost: savePostId } },
       )
       console.log(unSave, 'unlike')
       res.status(200).json({
         unSave,
-        saved,
       })
     } else {
-      const isSaved = await postModel.findByIdAndUpdate(
-        { _id: savePostId },
-        { $set: { isSaved: true } },
-      )
-      const savePost = await postModel.findByIdAndUpdate(
-        { _id: savePostId },
-        { $push: { savedPost: SavedUserId } },
+      const savePost = await userModel.findByIdAndUpdate(
+        { _id: SavedUserId },
+        { $push: { savedPost: savePostId } },
       )
       console.log(savePost, 'save')
-      res.status(200).json({ savePost, isSaved })
+      res.status(200).json({ savePost })
     }
+  } catch (error) {
+    res.status(500).json(error)
+    console.log(error)
+  }
+}
+
+exports.getUserPost = async (req, res) => {
+  try {
+    const userId = mongoose.Types.ObjectId(req.params.id)
+    const userPosts = await postModel
+      .find({ userId: userId })
+      .populate('userId')
+      .sort({ createdAt: -1 })
+    res.status(200).json(userPosts)
+  } catch (error) {
+    res.status(500).json(error)
+    console.log(error)
+  }
+}
+
+exports.getSavedPost = async (req, res) => {
+  try {
+    const userId = mongoose.Types.ObjectId(req.params.id)
+    const savedPosts = await userModel
+      .findOne({ _id: userId })
+      .populate({
+        path: 'savedPost',
+        populate: {
+          path: 'userId',
+          model: 'users',
+        },
+      })
+      .sort({ createdAt: -1 })
+    console.log(savedPosts, 'savedPost')
+    res.status(200).json(savedPosts)
+  } catch (error) {
+    res.status(500).json(error)
+    console.log(error)
+  }
+}
+
+
+exports.deletePost = async (req, res) => {
+  try {
+    const deletePostId = mongoose.Types.ObjectId(req.body.postId)
+    await postModel.findOneAndUpdate({_id:deletePostId}, {$set:{isDeleted:true}})
   } catch (error) {
     res.status(500).json(error)
     console.log(error)

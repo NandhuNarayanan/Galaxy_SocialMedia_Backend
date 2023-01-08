@@ -20,7 +20,7 @@ exports.addMessage = async (req, res) => {
 exports.getMessages = (async(req,res)=>{
   try {
     const {chatId} = req.params;
-    const result = await messageModel.find({chatId});
+    const result = await messageModel.find({_id:chatId});
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error)
