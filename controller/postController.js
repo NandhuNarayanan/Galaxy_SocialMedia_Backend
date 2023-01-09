@@ -20,11 +20,12 @@ exports.post = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
   try {
-    const Posts = await postModel
-      .find()
-      .populate('userId')
-      .sort({ createdAt: -1 })
-    res.status(200).json(Posts)
+  
+      const Posts = await postModel
+        .find({isDeleted:false})
+        .populate('userId')
+        .sort({ createdAt: -1 })
+      res.status(200).json(Posts)
   } catch (error) {
     res.status(500).json(error)
     console.log(error)
@@ -66,7 +67,7 @@ exports.getUserPost = async (req, res) => {
   try {
     const userId = mongoose.Types.ObjectId(req.params.id)
     const userPosts = await postModel
-      .find({ userId: userId })
+      .find({ userId: userId ,isDeleted:false})
       .populate('userId')
       .sort({ createdAt: -1 })
     res.status(200).json(userPosts)
@@ -80,7 +81,7 @@ exports.getSavedPost = async (req, res) => {
   try {
     const userId = mongoose.Types.ObjectId(req.params.id)
     const savedPosts = await userModel
-      .findOne({ _id: userId })
+      .findOne({ _id: userId ,isDeleted:false})
       .populate({
         path: 'savedPost',
         populate: {

@@ -13,6 +13,8 @@ router.patch('/profilePicture', profileController.profilePicture)
 
 router.patch('/editProfile', profileController.editProfile)
 
+router.post('/searchUser',profileController.searchUser)
+
 
 
 module.exports = router

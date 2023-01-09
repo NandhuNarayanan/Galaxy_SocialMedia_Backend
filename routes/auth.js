@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controller/authController');
-const verifyJWT = require('../controller/middleware/verifyJWT');
+const verifyJWT = require('../middleware/verifyJWT');
 
 router.get('/refresh', authController.refresh)
 router.get('/logout', verifyJWT, authController.logout)

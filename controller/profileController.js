@@ -108,3 +108,22 @@ exports.userList = async (req, res) => {
     console.log(error)
   }
 }
+
+
+exports.searchUser = async (req, res) => {
+  try {
+    console.log(req.body);
+    if(req.body.search === ''){
+      console.log('asfdf');
+    }
+    else{
+      const searchUsers =  await userModel.find({
+        firstName: {$regex: new RegExp(req.body.search),$options:"si"},
+      });
+      res.status(200).json(searchUsers)
+    }
+  } catch (error) {
+    res.status(500).json(error)
+    console.log(error)
+  }
+}
