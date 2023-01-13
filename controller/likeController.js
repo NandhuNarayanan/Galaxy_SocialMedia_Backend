@@ -1,5 +1,6 @@
 const { default: mongoose } = require('mongoose')
-const postModel = require('../model/postModel')
+const postModel = require('../model/postModel');
+const userModel = require('../model/userModel');
 
 exports.liked = async (req, res) => {
   console.log(req.body.postId,'sdsdfsf');
@@ -39,7 +40,7 @@ exports.liked = async (req, res) => {
       const post = await postModel.updateOne(
         { _id:postId },
         { isLiked: true },
-      )
+      ).populate('userId')
       const liked = await postModel.updateOne(
         {
           _id:postId
@@ -49,6 +50,25 @@ exports.liked = async (req, res) => {
         },
       )
       console.log(liked,'asdasddsadsa');
+      const postNotification = await postModel.findOne({
+        $and:[{_id:postId},
+          {likedUsers: [userId]}]
+        })
+      
+      const user = await userModel.findById({_id:userId});
+      console.log(post,'😎😎😎😎');
+      notificationContent = `${user.firstName} ${user.lastName} is liked your post`
+      const data = {
+        notificationContent: notificationContent,
+        profilepic:user.profilePicture,
+       Image:postNotification.image,
+        time: new Date()
+      }
+        console.log(postNotification,'❤️❤️❤️❤️');
+      
+      if (userId!==postNotification.userId) {
+        await userModel.updateOne({_id:postNotification.userId},{$push:{notification:data}})
+      }
       // liked.updateOne({ isLiked: true })
       res.status(200).json({
         liked,

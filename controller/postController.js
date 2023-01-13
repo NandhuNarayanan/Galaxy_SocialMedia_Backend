@@ -108,3 +108,15 @@ exports.deletePost = async (req, res) => {
     console.log(error)
   }
 }
+
+
+exports.postNotification = async (req, res) => {
+  try {
+   const notificationContent = await userModel.find()
+   res.status(200).json({notificationContent})
+  } catch (error) {
+    res.status(500).json(error)
+    console.log(error)
+  }
+}
+

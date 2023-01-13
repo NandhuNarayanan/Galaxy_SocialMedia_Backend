@@ -7,9 +7,9 @@ exports.comment = (async(req,res)=>{
         const {content } = req.body
         const postId = mongoose.Types.ObjectId(req.body.postId)
         const userId = mongoose.Types.ObjectId(req.body.userId)
-        const commentFound = await commentModel.findOne({_id:postId})
+        const commentFound = await commentModel.findOne({postId:postId})
         if (!commentFound) {
-            const newComment = new commentModel({_id:postId,comments:[{userId:userId,content}]})
+            const newComment = new commentModel({postId:postId,comments:[{userId:userId,content}]})
             newComment.save()
            return res.status(201).json({message:'commented successfully'})
         }
@@ -27,10 +27,24 @@ exports.comment = (async(req,res)=>{
 
 exports.getComments = (async(req,res)=> {
     try {
-        const showComments = await commentModel.findOne({postId:req.params.id}).populate('comments.userId')
+        const showComments = await commentModel.findOne({postId:req.params.id,isDeleted:false}).populate('comments.userId')
         res.status(200).json(showComments)
     } catch (error) {
         res.status(500).json(error)
         console.log(error);
     }
 })
+
+exports.deleteComment = async (req, res) => {
+    try {
+        console.log(req.body,'delete');
+      const deleteCommentId = mongoose.Types.ObjectId(req.body.commentId)
+      const postCommentId = mongoose.Types.ObjectId(req.body.postCommentId)
+
+     const findDeleteOne =  await commentModel.findOneAndUpdate({_id:postCommentId},{$pull:{comments:{ _id:deleteCommentId}}})
+ 
+    } catch (error) {
+      res.status(500).json(error)
+      console.log(error)
+    }
+  }
