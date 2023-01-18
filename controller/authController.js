@@ -104,12 +104,14 @@ exports.refresh = asyncHandler(async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-      const refreshToken = req.headers.refresh
+    console.log(req.params);
+    const user = mongoose.Types.ObjectId(req.params.id)
+      const refreshToken = req.headers.authorization
       if (!refreshToken) return res.status(400).json({ message: 'refreshToken missing' })
-      await userModel.findByIdAndUpdate(req.user, { $pull: { refreshToken } })
+      await userModel.findByIdAndUpdate({_id:user}, { $pull:  [refreshToken]  })
       res.status(200).json({ message: 'logout successfull' })
   } catch (error) {
-
+    
   }
 }
 

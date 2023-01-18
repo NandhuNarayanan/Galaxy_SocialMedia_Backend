@@ -7,6 +7,7 @@ const profileRouter = require('./routes/profile')
 const chatRouter = require('./routes/chat')
 const messageRouter = require('./routes/message')
 const storyRouter = require('./routes/story')
+const adminRouter = require('./routes/admin')
 
 let morgan = require('morgan')
 require('dotenv').config()
@@ -39,6 +40,7 @@ app.use('/profile',profileRouter)
 app.use('/chat',chatRouter)
 app.use('/message',messageRouter)
 app.use('/story',storyRouter)
+app.use('/admin',adminRouter)
 
  
 app.listen(port,()=>{

@@ -26,6 +26,7 @@ router.patch('/deleteComment',commentController.deleteComment)
 
 router.post('/comment', commentController.comment )
 
+router.post('/userReport', postController.userReport )
 
 
 

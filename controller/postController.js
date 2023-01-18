@@ -1,6 +1,7 @@
 const { default: mongoose } = require('mongoose')
 const postModel = require('../model/postModel')
 const userModel = require('../model/userModel')
+const reportModel = require('../model/reportModel')
 
 exports.post = async (req, res) => {
   try {
@@ -114,6 +115,32 @@ exports.postNotification = async (req, res) => {
   try {
    const notificationContent = await userModel.find()
    res.status(200).json({notificationContent})
+  } catch (error) {
+    res.status(500).json(error)
+    console.log(error)
+  }
+}
+
+exports.userReport = async (req, res) => {
+  try {
+   console.log(req.body);
+   const postId = mongoose.Types.ObjectId(req.body.postId)
+   const reason = req.body.value
+   const reportPost = await reportModel.findOne({postId:postId})
+   if (!reportPost) {
+    const reasons = new reportModel({
+      postId,
+      reports:reason
+    })
+    reasons.save()
+    console.log(reasons,'reassoooon');
+   }else{
+    const reportedPost = await reportModel.findOneAndUpdate(
+      { postId:postId },
+      { $push: { reports: reason } },
+    )
+    console.log(reportedPost, 'reportedPost')
+   }
   } catch (error) {
     res.status(500).json(error)
     console.log(error)

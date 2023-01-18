@@ -17,6 +17,7 @@ exports.profile = async (req, res) => {
 
 exports.follow = async (req, res) => {
   try {
+    console.log(req.body);
     const { followUserId, user } = req.body
     const userId = mongoose.Types.ObjectId(user)
     const profileUserId = mongoose.Types.ObjectId(followUserId)

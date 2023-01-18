@@ -26,7 +26,8 @@ const userSchema = mongoose.Schema({
         ref:'posts'
     }],
     notification:[{type:Object}],
-    refreshToken: [String]
+    isBlocked: { type: Boolean, default: false },
+    refreshToken: [String],
 
 },{ timestamps: true })
 

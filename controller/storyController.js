@@ -21,6 +21,11 @@ exports.uploadStory = (async(req,res)=> {
 
 exports.getStory = (async(req,res)=> {
     try {
+        // var nextDate = new Date(new Date() - 24*60*60*1000);
+        // const stories = await storyModel.find()
+        // console.log(stories.createdAt > nextDate);
+        // if (stories.createdAt > nextDate) { 
+        // }
         const getStories = await storyModel.find().populate('userId')
         res.status(200).json({getStories})
     } catch (error) {

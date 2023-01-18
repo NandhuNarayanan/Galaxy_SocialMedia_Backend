@@ -14,6 +14,7 @@ exports.comment = (async(req,res)=>{
            return res.status(201).json({message:'commented successfully'})
         }
        const comments = await commentModel.findByIdAndUpdate(commentFound._id,{$push:{comments:{userId:userId,content}}},{new:true}).populate('comments.userId').sort({createdAt:-1})
+       console.log(comments,'comments');
         res.status(201).json(comments)
 
         
@@ -27,7 +28,7 @@ exports.comment = (async(req,res)=>{
 
 exports.getComments = (async(req,res)=> {
     try {
-        const showComments = await commentModel.findOne({postId:req.params.id,isDeleted:false}).populate('comments.userId')
+        const showComments = await commentModel.findOne({postId:req.params.id}).populate('comments.userId')
         res.status(200).json(showComments)
     } catch (error) {
         res.status(500).json(error)
