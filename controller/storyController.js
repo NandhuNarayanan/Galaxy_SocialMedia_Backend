@@ -13,6 +13,7 @@ exports.uploadStory = (async(req,res)=> {
             userId,
         })
          createStory.save()
+         res.status(200).json('Stories Added')
     } catch (error) {
         res.status(500).json(error)
         console.log(error)

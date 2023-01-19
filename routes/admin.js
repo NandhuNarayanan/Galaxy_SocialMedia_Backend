@@ -13,7 +13,7 @@ router.patch('/blockUser',adminController.blockUser)
 
 router.post('/declinePost',adminController.declinePost)
 
-router.post('/adminlogin',adminController.adminlogin)
+router.post('/',adminController.adminlogin)
 
 
 

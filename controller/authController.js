@@ -144,3 +144,40 @@ exports.getAllUsers = async (req, res) => {
     console.log(error)
   }
 }
+
+
+// login with google
+exports.googleLogin = asyncHandler(async (req, res) => {
+  console.log(req.body,'goooogleeeeee');
+  const credential = req.body.userObject
+  const { email, given_name, family_name } = credential
+  const newUser = await userModel.findOne({ email }).exec()
+  if (newUser) {
+      const accessToken = jwt.createAccessToken(newUser._id)
+      const refreshToken = jwt.createRefreshToken(newUser._id)
+      newUser.refreshToken = [...newUser.refreshToken, refreshToken]
+      await newUser.save();
+      res.cookie('JWT', refreshToken, {
+          // httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          maxAge: 7 * 24 * 60 * 60 * 1000
+      })
+
+      return res.status(200).json({ accessToken , newUser})
+  } else {
+      const newUser = new userModel({ email, firstName:given_name, lastName:family_name })
+      const accessToken = jwt.createAccessToken(newUser._id)
+      const refreshToken = jwt.createRefreshToken(newUser._id)
+      await newUser.save()
+      res.cookie('JWT', refreshToken, {
+          // httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          maxAge: 7 * 24 * 60 * 60 * 1000
+      })
+
+      return res.status(200).json({ accessToken,newUser })
+
+  }
+})

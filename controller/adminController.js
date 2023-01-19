@@ -2,26 +2,31 @@ const { default: mongoose } = require('mongoose')
 const postModel = require('../model/postModel')
 const reportModel = require('../model/reportModel')
 const userModel = require('../model/userModel')
-const adminModel = require('../model/userModel')
-const jwt = require('../utils/Token')
+const adminModel = require('../model/adminModel')
+const token = require('../utils/Token')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt');
+const asyncHandler = require('express-async-handler')
 
 
 
 exports.adminlogin = async (req, res) => {
   console.log(req.body,'req.bodyreq.bodyreq.bodyreq.body');
-  const { email, password } = req.body
+  
+  const email = req.body.email
+  const password = req.body.password
 
   try {
-    if (!email || !password)
-      return res.status(400).json({ message: 'all fields required' })
+    if (!email || !password) return res.status(400).json({ message: 'all fields required' })
     const admin = await adminModel.findOne({ email })
+    console.log(admin,'0987654321');
     if (!admin) return res.status(401).json({ message: 'invalid user' })
     const result = await bcrypt.compare(password, admin.password)
     if (!result) return res.status(401).json({ message: 'invalid password' })
-    const accessToken = jwt.createAccessToken(admin._id)
-    const refreshToken = jwt.createRefreshToken(admin._id)
+    const accessToken = token.createAccessToken(admin._id)
+    const refreshToken = token.createRefreshToken(admin._id)
     await adminModel.findByIdAndUpdate(admin._id, { $push: { refreshToken } })
-    res.status(200).json({ refreshToken, accessToken, admin })
+    res.status(200).json({ refreshToken, accessToken })
   } catch (error) {
     res.status(500).json({
       message: error,
@@ -29,6 +34,55 @@ exports.adminlogin = async (req, res) => {
     console.log(error)
   }
 }
+
+exports.refresh = asyncHandler(async (req, res) => {
+  const cookie = req.headers.refresh
+  if (!cookie) return res.status(401).json({ message: 'Unauthorized' })
+  const refreshToken = cookie.split(' ')[1]
+  const foundUser = await adminModel
+    .findOne({ refreshToken: refreshToken })
+    .exec()
+  if (!foundUser) {
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      asyncHandler(async (error, decoded) => {
+        if (error) {
+          console.log(error)
+          return res.status(403)
+        }
+        const hacked = await adminModel.findById(decoded.user).exec()
+        hacked.refreshToken = []
+        await hacked.save()
+        return res.status(403).json({ message: 'forbidden' })
+      }),
+    )
+    return foundUser
+  }
+  const newArray = foundUser.refreshToken.filter((e) => e !== refreshToken)
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+    asyncHandler(async (error, decoded) => {
+      if (error) {
+        foundUser.refreshToken = newArray
+        await foundUser.save()
+        return res.status(403).json({ message: 'forbidden' })
+      }
+      const newRefreshToken = token.createRefreshToken(foundUser._id)
+
+      const accessToken = token.createAccessToken(foundUser._id)
+      foundUser.refreshToken = [...newArray, newRefreshToken]
+      await foundUser.save()
+      res.json({ refreshToken: newRefreshToken, accessToken })
+    }),
+  )
+})
+
+
+
+
+
 
 exports.getUsers = async (req, res) => {
   try {

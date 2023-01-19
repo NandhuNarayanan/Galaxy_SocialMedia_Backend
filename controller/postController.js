@@ -13,6 +13,7 @@ exports.post = async (req, res) => {
       caption: caption,
     })
     createPost.save()
+    res.status(200).json('Uploaded Successfully')
   } catch (error) {
     res.status(500).json(error)
     console.log(error)
@@ -21,12 +22,11 @@ exports.post = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
   try {
-  
-      const Posts = await postModel
-        .find({isDeleted:false})
-        .populate('userId')
-        .sort({ createdAt: -1 })
-      res.status(200).json(Posts)
+    const Posts = await postModel
+      .find({ isDeleted: false })
+      .populate('userId')
+      .sort({ createdAt: -1 })
+    res.status(200).json(Posts)
   } catch (error) {
     res.status(500).json(error)
     console.log(error)
@@ -68,7 +68,7 @@ exports.getUserPost = async (req, res) => {
   try {
     const userId = mongoose.Types.ObjectId(req.params.id)
     const userPosts = await postModel
-      .find({ userId: userId ,isDeleted:false})
+      .find({ userId: userId, isDeleted: false })
       .populate('userId')
       .sort({ createdAt: -1 })
     res.status(200).json(userPosts)
@@ -82,7 +82,7 @@ exports.getSavedPost = async (req, res) => {
   try {
     const userId = mongoose.Types.ObjectId(req.params.id)
     const savedPosts = await userModel
-      .findOne({ _id: userId ,isDeleted:false})
+      .findOne({ _id: userId, isDeleted: false })
       .populate({
         path: 'savedPost',
         populate: {
@@ -99,22 +99,24 @@ exports.getSavedPost = async (req, res) => {
   }
 }
 
-
 exports.deletePost = async (req, res) => {
   try {
     const deletePostId = mongoose.Types.ObjectId(req.body.postId)
-    await postModel.findOneAndUpdate({_id:deletePostId}, {$set:{isDeleted:true}})
+    await postModel.findOneAndUpdate(
+      { _id: deletePostId },
+      { $set: { isDeleted: true } },
+    )
+    res.status(200).json('Post Deleted')
   } catch (error) {
     res.status(500).json(error)
     console.log(error)
   }
 }
 
-
 exports.postNotification = async (req, res) => {
   try {
-   const notificationContent = await userModel.find()
-   res.status(200).json({notificationContent})
+    const notificationContent = await userModel.find()
+    res.status(200).json({ notificationContent })
   } catch (error) {
     res.status(500).json(error)
     console.log(error)
@@ -123,27 +125,26 @@ exports.postNotification = async (req, res) => {
 
 exports.userReport = async (req, res) => {
   try {
-   console.log(req.body);
-   const postId = mongoose.Types.ObjectId(req.body.postId)
-   const reason = req.body.value
-   const reportPost = await reportModel.findOne({postId:postId})
-   if (!reportPost) {
-    const reasons = new reportModel({
-      postId,
-      reports:reason
-    })
-    reasons.save()
-    console.log(reasons,'reassoooon');
-   }else{
-    const reportedPost = await reportModel.findOneAndUpdate(
-      { postId:postId },
-      { $push: { reports: reason } },
-    )
-    console.log(reportedPost, 'reportedPost')
-   }
+    console.log(req.body)
+    const postId = mongoose.Types.ObjectId(req.body.postId)
+    const reason = req.body.value
+    const reportPost = await reportModel.findOne({ postId: postId })
+    if (!reportPost) {
+      const reasons = new reportModel({
+        postId,
+        reports: reason,
+      })
+      reasons.save()
+      console.log(reasons, 'reassoooon')
+    } else {
+      const reportedPost = await reportModel.findOneAndUpdate(
+        { postId: postId },
+        { $push: { reports: reason } },
+      )
+      console.log(reportedPost, 'reportedPost')
+    }
   } catch (error) {
     res.status(500).json(error)
     console.log(error)
   }
 }
-
